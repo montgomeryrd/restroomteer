@@ -3,9 +3,19 @@ const express = require('express');
 const morgan = require('morgan');
 const cors = require('cors');
 const mongoose = require('mongoose');
+const PORT = process.env.PORT || 8000;
 require('dotenv').config();
 
-const PORT = process.env.PORT || 8000;
+mongoose.connect(process.env.MONGO_URI, {
+    useUnifiedTopology: true,
+    useNewUrlParser: true,
+    useCreateIndex: true
+}).then(() => console.log("Mongo Database Connected".cyan));
+
+mongoose.connection.on("error", err => {
+    console.log(`Mongo Database Connection Error: ${err.message}`);
+});
+
 const app = express();
 
 // import routes
@@ -21,5 +31,5 @@ if (process.env.NODE_ENV === 'development') app.use(cors({origin: 'http://localh
 app.use('/api', authRoutes);
 
 app.listen(PORT, () => {
-    console.log(`Server listening on ${PORT}`.yellow);
+    console.log(`Server listening on ${PORT}`.cyan);
 });
